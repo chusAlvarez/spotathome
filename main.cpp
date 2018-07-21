@@ -12,6 +12,11 @@
 
 using namespace std;
 
+bool runserver = true;
+void sig_handler (int signum) 
+{ 
+  runserver = false;
+}
 //UTILITY FUNCTIONS
 
 bool readFromFile(std::string myfile, web::json::value * res_json)
@@ -34,28 +39,114 @@ bool readFromFile(std::string myfile, web::json::value * res_json)
 
 }     
 
-bool fillRequestList(std::list<serverRequest>* request,web::json::value * res_json)
+bool fillRequestList(std::vector<serverRequest>* request,web::json::value * res_json)
 {
+    web::json::array servers = res_json->as_array();
+  
+    web::json::value server;
+    std::string method;
+    std::string endpoint;
+    std::string body;
+    std::map<std::string,std::string> headers;
+
+  for(web::json::array::iterator it = servers.begin();it != servers.end();it++)
+  {
+      server = (*it).at("request");
+      method = server.at("method").as_string();
+      endpoint = server.at("endpoint").as_string();
+  
+      if(server.has_field("body"))
+	  body = server.at("body").as_string();
+      else
+	  body = "";
+      
+      if(server.has_field("headers"))
+      {
+	  headers.clear();
+	  web::json::array jsonheaders = server.at("headers").as_array();
+	  std::string key;
+	  std::string value;
+	  for ( std::vector<web::json::value>::iterator ith = jsonheaders.begin(); ith < jsonheaders.end();ith++)
+	  {
+	    key = (*ith).at("key").as_string();
+	    value = (*ith).at("value").as_string();
+	    headers.insert(std::pair<std::string,std::string>(key,value));
+	  }
+      }
+      
+      serverRequest newreq(method, endpoint, headers,body);
+      if(server.has_field("description"))
+	newreq.setDescription(server.at("description").as_string());
+      
+      request->push_back(newreq);
+      
+      if((*it).has_field("response_ok"))
+      {
+	  web::json::value ok = (*it).at("response_ok");
+	  serverAnswerValidator* newvalidator = new serverAnswerValidator(ok);
+	  request->back().setValidator(newvalidator);
+      }
+  }
   return false;
 }
 
 int main(int argc, char **argv)
 {
+   if(argc != 2)
+   {
+     cout << "Usage:" << endl;
+     cout << "		" << argv[0] << "configurationfile.json" << endl;
+     return 0;
+   }
+   
+   //Handlers to stop the server
+   
+   signal (SIGINT, sig_handler);
+   signal (SIGHUP, sig_handler);
+   signal (SIGTERM, sig_handler);
+  
    web::json::value configjson;
 
-   if(!readFromFile(argv[0], &configjson))
+   // Configuration read 
+   if(!readFromFile(argv[1], &configjson))
    {
-      std::cerr << "unable to run manager, cant read file" << std::endl;
+      std::cerr << "unable to run manager, cant read file" << argv[1] << std::endl;
       return false;
    
    }
    
-   std::list<serverRequest> request;
+   std::vector<serverRequest> request;
    
    if(!fillRequestList(&request, &configjson) || request.size() == 0)
    {
       std::cerr << "unable to check list manager, cant read request list or empty" << std::endl;
       return false;
    }   
+   serverListManager listmanager;
+   listmanager.setServerList(request);
+
+   
+   //We build the notificator to send data to our server
+   
+   std::map<std::string,std::string>  notiheaders;
+   notiheaders.insert(std::pair<std::string,std::string>("Authorization", "Bearer 38f51854b1a282d8e9acdb74710fccc0ba3eb4db"));
+   serverRequest notificator("POST", "https://interview-notifier-svc.spotahome.net/api/v1/notification", notiheaders);
+   
+   //Now run until a signal stop us....
+   while(runserver)
+   {
+     serverRequest nextrequest = listmanager.getNext();
+     if(!nextrequest.call())
+     {
+       std::string send_info = "{\"service\":\"";
+       send_info.append(nextrequest.endpoint());
+       send_info.append("\",\"description\":\"");
+       send_info.append(nextrequest.description());
+       send_info.append("\"}");
+       if(!notificator.call(send_info))
+	 cout << "WE HAVE NOT CONNECTION WITH THE SERVER. Data not sended:" << send_info << endl;
+     }
+     sleep(2); //We wait between calls....
+   }
     return 0;
 }

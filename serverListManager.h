@@ -8,7 +8,9 @@ class serverListManager
   public:
     serverListManager();
     ~serverListManager();
-    serverRequest getNext();
+    bool size(){return m_serverRequest.size();}
+    //This throw a excepction if used with the list empty....
+    serverRequest& getNext();
     void setServerList(std::vector<serverRequest>& serverRequest);
   private:
     std::vector<serverRequest> m_serverRequest;

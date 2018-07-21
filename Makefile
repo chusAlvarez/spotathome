@@ -14,5 +14,7 @@ buildtest:
 
 test: buildtest
 	test/test_spotathome || exit 1
-
-
+	
+.PHONY: clean
+clean:
+	rm -rf *.o spotathome test/.o test_spotathome

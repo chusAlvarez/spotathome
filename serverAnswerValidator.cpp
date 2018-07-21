@@ -54,11 +54,11 @@ bool serverAnswerValidator::checkHeaders(web::http::http_response* response)
     for(std::map<std::string,std::string>::const_iterator it = m_headers.begin();it != m_headers.end();it++)
     {
 	web::http::http_headers::iterator ithead = headers.find((*it).first);
-	if(ithead != headers.end())
-	{
-	    if((*ithead).second != (*it).second)
-	      return false;	  
-	}	  
+	if(ithead == headers.end())
+	  return false;
+	 
+	if((*ithead).second != (*it).second)
+	  return false;	  
     }   
   }
   return true;
@@ -70,7 +70,7 @@ bool serverAnswerValidator::checkBody(web::http::http_response* response)
       if(response->body().is_valid())
       {      
 	std::string body = response->extract_string(true).get();
-	if (!(body== m_body))
+	if (body != m_body)
 	  return false;
       }else
 	  return false;
@@ -101,15 +101,15 @@ bool serverAnswerValidator::checkAny(web::http::http_response* response)
     if(checkBody(response))
       return true;
     
-  if(!checkHeaders(response))
-      return false;
+  if(checkHeaders(response))
+      return true;
     
     return false;
 }
 
 bool serverAnswerValidator::checkResponse(web::http::http_response* response)
 {
-  if(!m_code && !m_body.size())
+  if(!m_code && !m_body.size() && !m_headers.size())
     return false;
   
   if (m_validAny)

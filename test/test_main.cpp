@@ -72,8 +72,7 @@ bool test_answerServerValidator()
   res = res && check(anyValidator.checkResponse(&playresponse));
 
   playresponse.set_body("");
-  web::http::http_headers headers = playresponse.headers(); 
-  headers.add("itsok","yes");
+  playresponse.headers().add("itsok","yes");
 
   res = res && check(!defaultValidator->checkResponse(&playresponse));
   res = res && check(!codeValidator.checkResponse(&playresponse));
@@ -84,6 +83,7 @@ bool test_answerServerValidator()
   
   return res;  
 }
+
 bool  test_serverRequest()
 {
   
@@ -113,22 +113,22 @@ bool test_serverListManager()
    
    serverRequest myone = listmanager.getNext();
    
-   bool res = check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.headers() == "") && (myone.body() == ""));
+   bool res = check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.body() == ""));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.headers() == "") && (myone.body() == ""));
+   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
 
-   request.push_back(serverRequest("POST","https://euwest1.otherapp.io/checks","","{\"checker\": \"spotahome\"}"));
+   request.push_back(serverRequest("POST","https://euwest1.otherapp.io/checks","{\"checker\": \"spotahome\"}"));
    listmanager.setServerList(request);
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.headers() == "") && (myone.body() == ""));
+   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "POST") && (myone.endpoint() == "https://euwest1.otherapp.io/checks") &&  (myone.headers() == "") && (myone.body() == "{\"checker\": \"spotahome\"}"));
+   res =  res && check((myone.method() == "POST") && (myone.endpoint() == "https://euwest1.otherapp.io/checks") && (myone.body() == "{\"checker\": \"spotahome\"}"));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.headers() == "") && (myone.body() == ""));
+   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
    return res;
 }
 
