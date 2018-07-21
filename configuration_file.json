@@ -1,0 +1,60 @@
+[ 
+  { "name" : "myapp",
+    "description" : "a really unknow but important one",
+    "request" : {
+      "endpoint": "http://myapp.com/check",
+      "method": "GET"
+	  },    
+    "response_ok": {
+    "code": 200
+      }
+    },
+   { "name" : "otherapp-euwest",
+    "description" : "One developed by euwest people",
+    "request" : {
+      "endpoint": "https://euwest1.otherapp.io/checks",
+      "method": "POST",
+      "body": "{\"checker\": \"spotahome\"}"
+	  },    
+    "response_ok": {
+    "headers": [{"key": "healtcheck","value" : "ok"}]
+       }
+    },   
+  { "name" : "important-service",
+    "description" : "A really critical one",
+    "request" : {
+      "endpoint": "http://awesome-teapot.io:18976/healthz/live",
+      "method": "GET"
+	  },    
+    "response_ok": {
+    "code": 418
+      }
+    },
+    { "name" : "zen-service",
+    "description" : "One with the All",
+    "request" : {
+      "endpoint": "https://mydumbservice.io/checkmy",
+      "method": "GET",
+      "headers" : [{"key":"accept", "value" : "application/json"}]
+	  },    
+    "response_ok": {
+     "code": 200,
+     "headers" : [{"key": "itsok","value" : "yes"}],
+     "body" :  "{\"itsok\": \"yes\"}"
+       }
+    }
+     { "name" : "agreeable-service",
+    "description" : "One with the Any",
+    "request" : {
+      "endpoint": "https://mydumbservice.io/checkmy",
+      "method": "GET",
+      "headers" : [{"key":"accept", "value" : "application/json"}]
+	  },    
+    "response_ok": {
+     "mode": "any",
+     "code": 200,
+     "headers" : [{"key": "itsok","value" : "yes"}],
+     "body" :  "{\"itsok\": \"yes\"}"
+       }
+    }
+]
