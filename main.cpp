@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <strings.h>
 #include <cpprest/json.h>
+#include <cpprest/http_listener.h>
 #include "serverListManager.h"
 
 using namespace std;
@@ -90,7 +91,35 @@ bool fillRequestList(serverListManager* request,web::json::value * res_json)
   }
   return true;
 }
+void handle_live(web::http::http_request request)
+{
+   cout << "gets the call....:" << endl;
+   request.reply(200, "ok");
+}
 
+void* setListener(void *)
+{
+   web::http::experimental::listener::http_listener listener("http://localhost:6666/healthz");
+
+   listener.support("GET",  handle_live);
+   listener.support("POST", handle_live);
+   listener.support("PUT",  handle_live);
+   listener.support("DEL",  handle_live);
+
+   try
+   {
+      listener.open()
+         .then([&listener]() {cout << "starting server..." << endl;})
+         .wait();
+      while (runserver);     
+      
+   }
+   catch (exception const & e)
+   {
+      cout << "Unable to set listener....." << endl;
+   }
+
+}
 int main(int argc, char **argv)
 {
    if(argc != 2)
@@ -131,6 +160,14 @@ int main(int argc, char **argv)
    notiheaders.insert(std::pair<std::string,std::string>("Authorization", "Bearer 38f51854b1a282d8e9acdb74710fccc0ba3eb4db"));
    serverRequest notificator("POST", "https://interview-notifier-svc.spotahome.net/api/v1/notification", notiheaders);
    
+   //set listener
+   pthread_t listener_thread;
+   if(pthread_create(&listener_thread, NULL, setListener, NULL)) 
+   {
+	  cout << "Unable to set listener....." << endl;
+
+   }
+
    //Now run until a signal stop us....
    while(runserver)
    {
