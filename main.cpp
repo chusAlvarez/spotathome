@@ -19,27 +19,28 @@ void sig_handler (int signum)
 }
 //UTILITY FUNCTIONS
 
-bool readFromFile(std::string myfile, web::json::value * res_json)
+bool readFromFile(std::string myfile, web::json::value& res_json)
 {
-  try 
+ // try 
   {
     std::ifstream  json_file(myfile, std::ifstream::in);
     std::stringstream filestream;
     filestream << json_file.rdbuf();
+    res_json = web::json::value::parse(filestream);
     json_file.close();
-    
-    *res_json = web::json::value::parse(filestream);
-  }
+
+  }/*
   catch (web::json::json_exception excep) 
   {
+    cout << excep << endl;
     return false;
-  }
+  }*/
   
   return true;
 
 }     
 
-bool fillRequestList(std::vector<serverRequest>* request,web::json::value * res_json)
+bool fillRequestList(serverListManager* request,web::json::value * res_json)
 {
     web::json::array servers = res_json->as_array();
   
@@ -74,20 +75,20 @@ bool fillRequestList(std::vector<serverRequest>* request,web::json::value * res_
 	  }
       }
       
-      serverRequest newreq(method, endpoint, headers,body);
-      if(server.has_field("description"))
-	newreq.setDescription(server.at("description").as_string());
+      serverRequest* newreq = new serverRequest(method, endpoint, headers,body);
+      if( (*it).has_field("description"))
+	newreq->setDescription((*it).at("description").as_string());
       
-      request->push_back(newreq);
+      
       
       if((*it).has_field("response_ok"))
       {
-	  web::json::value ok = (*it).at("response_ok");
-	  serverAnswerValidator* newvalidator = new serverAnswerValidator(ok);
-	  request->back().setValidator(newvalidator);
+	  serverAnswerValidator* newvalidator = new serverAnswerValidator((*it));
+	  newreq->setValidator(newvalidator);
       }
+      request->addtoList(newreq);
   }
-  return false;
+  return true;
 }
 
 int main(int argc, char **argv)
@@ -108,22 +109,20 @@ int main(int argc, char **argv)
    web::json::value configjson;
 
    // Configuration read 
-   if(!readFromFile(argv[1], &configjson))
+   if(!readFromFile(argv[1], configjson))
    {
       std::cerr << "unable to run manager, cant read file" << argv[1] << std::endl;
       return false;
    
    }
    
-   std::vector<serverRequest> request;
-   
-   if(!fillRequestList(&request, &configjson) || request.size() == 0)
+   serverListManager listmanager;
+
+   if(!fillRequestList(&listmanager, &configjson) || listmanager.size() == 0)
    {
       std::cerr << "unable to check list manager, cant read request list or empty" << std::endl;
       return false;
    }   
-   serverListManager listmanager;
-   listmanager.setServerList(request);
 
    
    //We build the notificator to send data to our server
@@ -135,17 +134,19 @@ int main(int argc, char **argv)
    //Now run until a signal stop us....
    while(runserver)
    {
-     serverRequest nextrequest = listmanager.getNext();
-     if(!nextrequest.call())
+     serverRequest* nextrequest = listmanager.getNext();
+     if(!nextrequest->call())
      {
        std::string send_info = "{\"service\":\"";
-       send_info.append(nextrequest.endpoint());
+       send_info.append(nextrequest->endpoint());
        send_info.append("\",\"description\":\"");
-       send_info.append(nextrequest.description());
+       send_info.append(nextrequest->description());
        send_info.append("\"}");
        if(!notificator.call(send_info))
 	 cout << "WE HAVE NOT CONNECTION WITH THE SERVER. Data not sended:" << send_info << endl;
-     }
+       
+     } else  
+	cout << "SUCCESS:" << nextrequest->endpoint() << endl;
      sleep(2); //We wait between calls....
    }
     return 0;

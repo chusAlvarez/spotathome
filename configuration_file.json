@@ -42,7 +42,7 @@
      "headers" : [{"key": "itsok","value" : "yes"}],
      "body" :  "{\"itsok\": \"yes\"}"
        }
-    }
+    },
      { "name" : "agreeable-service",
     "description" : "One with the Any",
     "request" : {
@@ -55,6 +55,17 @@
      "code": 200,
      "headers" : [{"key": "itsok","value" : "yes"}],
      "body" :  "{\"itsok\": \"yes\"}"
+       }
+    },
+    { "name" : "responsive-service",
+    "description" : "this answer",
+    "request" : {
+      "endpoint": "http://api.wunderground.com/api/Your_Key/conditions/q/CA/San_Francisco.json",
+      "method": "GET"
+    },    
+    "response_ok": {
+     "mode": "any",
+     "code": 200
        }
     }
 ]

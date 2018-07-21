@@ -8,15 +8,23 @@ serverListManager::serverListManager()
 } 
 serverListManager::~serverListManager()
 {
+  std::vector<serverRequest*>::iterator it = m_serverRequest.begin();
+  while(it != m_serverRequest.end())
+  {
+      delete((*it));
+      m_serverRequest.erase(it);
+      it =  m_serverRequest.begin();
+  }
   
 } 
-void serverListManager::setServerList(std::vector<serverRequest>& serverRequest)
+void serverListManager::addtoList(serverRequest* request,bool reset)
 {
-    m_index= 0;
-    m_serverRequest = serverRequest;
+  m_serverRequest.push_back(request);
+  if(reset)
+    m_index = 0;
 } 
 
-serverRequest& serverListManager::getNext()
+serverRequest* serverListManager::getNext()
 {
   int oldindex = m_index;
   if(m_serverRequest.size()!= 0)

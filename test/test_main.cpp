@@ -105,30 +105,27 @@ bool  test_serverRequest()
 bool test_serverListManager()
 {
    serverListManager listmanager;	
-   std::vector<serverRequest> request;
+    
+   listmanager.addtoList(new serverRequest("GET","http://myapp.com/check"),true);
    
+   serverRequest* myone = listmanager.getNext();
    
-   request.push_back(serverRequest("GET","http://myapp.com/check"));
-   listmanager.setServerList(request);
-   
-   serverRequest myone = listmanager.getNext();
-   
-   bool res = check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") &&  (myone.body() == ""));
+   bool res = check((myone->method() == "GET") && (myone->endpoint() == "http://myapp.com/check") &&  (myone->body() == ""));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
+   res =  res && check((myone->method() == "GET") && (myone->endpoint() == "http://myapp.com/check") && (myone->body() == ""));
 
-   request.push_back(serverRequest("POST","https://euwest1.otherapp.io/checks","{\"checker\": \"spotahome\"}"));
-   listmanager.setServerList(request);
+   listmanager.addtoList(new serverRequest("POST","https://euwest1.otherapp.io/checks","{\"checker\": \"spotahome\"}"),true);
+   
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
+   res =  res && check((myone->method() == "GET") && (myone->endpoint() == "http://myapp.com/check") && (myone->body() == ""));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "POST") && (myone.endpoint() == "https://euwest1.otherapp.io/checks") && (myone.body() == "{\"checker\": \"spotahome\"}"));
+   res =  res && check((myone->method() == "POST") && (myone->endpoint() == "https://euwest1.otherapp.io/checks") && (myone->body() == "{\"checker\": \"spotahome\"}"));
    
    myone = listmanager.getNext();
-   res =  res && check((myone.method() == "GET") && (myone.endpoint() == "http://myapp.com/check") && (myone.body() == ""));
+   res =  res && check((myone->method() == "GET") && (myone->endpoint() == "http://myapp.com/check") && (myone->body() == ""));
    return res;
 }
 

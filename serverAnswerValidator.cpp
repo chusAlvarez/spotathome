@@ -55,10 +55,15 @@ bool serverAnswerValidator::checkHeaders(web::http::http_response* response)
     {
 	web::http::http_headers::iterator ithead = headers.find((*it).first);
 	if(ithead == headers.end())
+	{
+	  std::cout << "header " << (*it).first << "not found" << std::endl;
 	  return false;
-	 
+	}
 	if((*ithead).second != (*it).second)
+	{
+	   std::cout << "header expected" <<  (*it).second << "received" << (*ithead).second << std::endl;
 	  return false;	  
+	}
     }   
   }
   return true;
@@ -71,7 +76,10 @@ bool serverAnswerValidator::checkBody(web::http::http_response* response)
       {      
 	std::string body = response->extract_string(true).get();
 	if (body != m_body)
+	{
+	  std::cout << "body expected" << m_body << "received" << body << std::endl;
 	  return false;
+	}
       }else
 	  return false;
     }
@@ -82,7 +90,10 @@ bool serverAnswerValidator::checkAll(web::http::http_response* response)
 {
 
   if ((m_code) &&  ! (response->status_code() == m_code))
+  {
+    std::cout << "code expected" << m_code << "received" << response->status_code() << std::endl;
     return false;
+  }
   
   if(!checkBody(response))
       return false;
