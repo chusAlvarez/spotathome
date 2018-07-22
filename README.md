@@ -56,6 +56,16 @@ File in ./circleci/config.yml
   - Push it to google cloud docker registration service
   - Launch kubernetes with k8s.yml configuration in google cloud
 
+# TODO
+- Configure a retry number in the json for each server
+- Configure a retry number by the notificator (by the way, sometimes the service returns 404 instead 200... have a hard time until see it)
+- Configure a priority (but this can be acomplished splitting the server list between some instances, so probably don't worth the time)
+- Give more information about the failure (can't resolve name, cant reach ip, response given not a correct one...)
+- Change dinamically the server list (but this can be acomplished changing the file in the docker and launching a new pod version, so probably don't worth also the time)
+- Change the sdk... in retrospective cpprest was a bad idea (monstruous binary and lot of time linking. My bad)
+- Refactor, refactor, refactor....
+
+
 
 
 
