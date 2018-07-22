@@ -98,7 +98,7 @@ void handle_live(web::http::http_request request)
 
 void* setListener(void *)
 {
-   web::http::experimental::listener::http_listener listener("http://*:3000/healthz");
+   web::http::experimental::listener::http_listener listener("http://0.0.0.0:3000/healthz");
 
    listener.support("GET",  handle_live);
    listener.support("POST", handle_live);

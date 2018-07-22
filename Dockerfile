@@ -4,7 +4,7 @@ WORKDIR /home/dev
 COPY . spotathome
 USER root
 RUN chown -R dev:dev spotathome
-RUN apt-get -y install curl
+RUN apt-get -y install curl net-tools
 USER dev
 WORKDIR /home/dev/spotathome
 RUN chmod +x launcher.sh
