@@ -42,6 +42,19 @@ Main program:
 - Call all the servers in the order given by the serverListManager, and if fails send a message using the notifier
 - Stop when a signal is received
 
+# Continuos integration
+## Configured in circleci (https://circleci.com) 
+File in ./circleci/config.yml
+
+- First job: Every time a commit is pushed in github, we
+  - Build the test
+  - Run the test
+  - Build the binary
+- Second job (if the First one ended with no trouble)
+  - Make one docker google-cloud-compatible with
+  - Install the source code and build the binary 
+  - Push it to google cloud docker registration service
+  - Launch kubernetes with k8s.yml configuration in google cloud
 
 
 
