@@ -3,6 +3,33 @@
 #include "serverAnswerValidator.h"
 
 serverAnswerValidator* serverAnswerValidator::m_defaut = new serverAnswerValidator(200);
+validatorFactory* validatorFactory::mysingleton = new validatorFactory();
+
+validatorFactory::validatorFactory()
+{
+}
+validatorFactory::~validatorFactory()
+{
+   std::list<serverAnswerValidator*>::iterator it = m_list.begin();
+   
+   while (it != m_list.end())
+   {
+      m_list.erase(it);
+      delete((*it));
+      it = m_list.begin();      
+   }
+}
+serverAnswerValidator* validatorFactory::getValidator(web::json::value json)
+{
+  return mysingleton->internal_getValidator(json);
+}
+serverAnswerValidator* validatorFactory::internal_getValidator(web::json::value json)
+{
+    serverAnswerValidator* res = new serverAnswerValidator(json);
+    m_list.push_back(res);
+    return res;
+}
+
 void serverAnswerValidator::initToEmpty()
 {
     m_code = 0;

@@ -27,3 +27,17 @@ class serverAnswerValidator
     std::map<std::string,std::string> m_headers;
       
 };
+
+class validatorFactory
+{
+  public:
+      
+      ~validatorFactory();
+      static serverAnswerValidator* getValidator(web::json::value json);
+      
+private:
+      validatorFactory();
+      serverAnswerValidator* internal_getValidator(web::json::value json);
+      std::list<serverAnswerValidator*> m_list;
+      static validatorFactory* mysingleton;
+};

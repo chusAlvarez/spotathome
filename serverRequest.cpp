@@ -75,14 +75,9 @@ bool serverRequest::call(std::string body)
   
   return res;
 }
-void serverRequest::setValidator(serverAnswerValidator* validator)
+void serverRequest::setValidator(web::json::value json)
 {
-  if((m_validator != NULL) && (m_validator != serverAnswerValidator::getDefault()))
-  {
-    delete (m_validator);
-    m_validator = NULL;
-  }
-  m_validator = validator;
+  m_validator = validatorFactory::getValidator(json);
 }
 serverRequest::~serverRequest()
 {
@@ -92,12 +87,6 @@ serverRequest::~serverRequest()
     m_client = NULL;
     delete(m_request);
     m_request = NULL;
-  }
-  
-  if((m_validator != NULL) && (m_validator != serverAnswerValidator::getDefault()))
-  {
-    delete (m_validator);
-    m_validator = NULL;
-  }
+  } 
 }
 

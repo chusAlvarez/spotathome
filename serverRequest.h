@@ -14,7 +14,7 @@ class serverRequest
     //To change the default body
     bool call(std::string body);
     bool call();
-    void setValidator(serverAnswerValidator* validator);
+    void setValidator(web::json::value json);
     void setDescription(std::string serviceDescription);
     std::string method(){return m_method;}
     std::string endpoint(){return m_endpoint;}
@@ -32,7 +32,5 @@ private:
     web::http::client::http_client* m_client;
     web::http::http_request* m_request;
     serverAnswerValidator* m_validator;
-    
-    
-    
 };
+

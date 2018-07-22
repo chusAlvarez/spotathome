@@ -22,7 +22,7 @@ void sig_handler (int signum)
 
 bool readFromFile(std::string myfile, web::json::value& res_json)
 {
- // try 
+  try 
   {
     std::ifstream  json_file(myfile, std::ifstream::in);
     std::stringstream filestream;
@@ -30,12 +30,12 @@ bool readFromFile(std::string myfile, web::json::value& res_json)
     res_json = web::json::value::parse(filestream);
     json_file.close();
 
-  }/*
+  }
   catch (web::json::json_exception excep) 
   {
-    cout << excep << endl;
+    cout << excep.what() << endl;
     return false;
-  }*/
+  }
   
   return true;
 
@@ -84,8 +84,7 @@ bool fillRequestList(serverListManager* request,web::json::value * res_json)
       
       if((*it).has_field("response_ok"))
       {
-	  serverAnswerValidator* newvalidator = new serverAnswerValidator((*it));
-	  newreq->setValidator(newvalidator);
+	  newreq->setValidator((*it));
       }
       request->addtoList(newreq);
   }
@@ -99,7 +98,7 @@ void handle_live(web::http::http_request request)
 
 void* setListener(void *)
 {
-   web::http::experimental::listener::http_listener listener("http://localhost:6666/healthz");
+   web::http::experimental::listener::http_listener listener("http://localhost/healthz");
 
    listener.support("GET",  handle_live);
    listener.support("POST", handle_live);
