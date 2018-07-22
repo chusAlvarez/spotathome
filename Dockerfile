@@ -1,19 +1,14 @@
-FROM ubuntu
-RUN apt-get update
-RUN apt-get install -y g++ git make zlib1g-dev libboost-all-dev libssl-dev cmake
-RUN apt-get install -y vim
-RUN useradd -ms /bin/bash dev
+FROM chusalvarez/spotathome
 USER dev
 WORKDIR /home/dev
-RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca
-WORKDIR /home/dev/casablanca/Release
-RUN mkdir build.debug
-WORKDIR /home/dev/casablanca/Release/build.debug
-RUN pwd
-RUN cmake .. -DCMAKE_BUILD_TYPE=Debug
-RUN make
+COPY . spotathome
 USER root
-RUN make install
+RUN chown -R dev:dev spotathome
 USER dev
-WORKDIR /home/dev
-ENTRYPOINT /bin/bash
+WORKDIR /home/dev/spotathome
+RUN chmod +x launcher.sh
+RUN make clean
+RUN export LD_LIBRARYPATH=/usr/local/lib && make buildmain
+ENV LD_LIBRARYPATH /usr/local/lib
+EXPOSE 80
+CMD ["/home/dev/spotathome/launcher.sh"]

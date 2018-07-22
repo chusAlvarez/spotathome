@@ -13,6 +13,8 @@ buildtest:
 test: buildtest
 	test/test_spotathome || exit 1
 	
-.PHONY: clean
+.PHONY: clean go
+go:
+	./spotathome ./configuration_file.json
 clean:
 	rm -rf *.o spotathome test/.o test_spotathome
