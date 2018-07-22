@@ -35,11 +35,12 @@ unit test file
 
 ## main.cpp
 Main program:
--Read the configuration from json
--Create a serverRequest for each server in the configuration, and another one to notify the failures
--launch a secondary thread with its own healt endpoint
--Call all the servers in the order given by the serverListManager, and if fails send a message using the notifier
--Stop when a signal is received
+
+- Read the configuration from json
+- Create a serverRequest for each server in the configuration, and another one to notify the failures
+- launch a secondary thread with its own healt endpoint
+- Call all the servers in the order given by the serverListManager, and if fails send a message using the notifier
+- Stop when a signal is received
 
 
 
