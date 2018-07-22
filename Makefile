@@ -2,8 +2,6 @@ CXXFLAGS=-std=c++11
 SPOTATHOME_OBJECTS= serverListManager.cpp serverRequest.cpp serverAnswerValidator.cpp
 LIBS=-lcpprest -lboost_system -lcrypto -lssl  -lpthread
 
-export LD_LIBRARY_PATH="/usr/local/lib"
-
 default: buildmain
 
 buildmain:
