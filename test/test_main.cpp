@@ -13,7 +13,7 @@ inline bool check_func(bool condition, std::string expr, std::string file, std::
         std::cerr << "condition '" << expr << "' in " << file << ':' << line << " (" << func << ") FAILED" << std::endl;
 	return false;
     }else
-        std::cerr << "condition '" << expr << "' in " << file << ':' << line << " (" << func << ") PASS" << std::endl;
+        std::cout << "condition '" << expr << "' in " << file << ':' << line << " (" << func << ") PASS" << std::endl;
     
     return true;
 }
