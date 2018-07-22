@@ -1,0 +1,13 @@
+[ 
+    { "name" : "zen-service",
+    "description" : "One with the All",
+    "request" : {
+      "endpoint": "http://interview-notifier-svc.spotahome.net/api/v1/notification",
+      "method": "POST",
+      "headers" : [{"key":"Authorization", "value" : "este es nuestroserviciohttp"}]
+	  },    
+    "response_ok": {
+     "code": 200
+       }
+    }
+]

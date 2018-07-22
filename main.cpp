@@ -155,9 +155,10 @@ int main(int argc, char **argv)
    
    //We build the notificator to send data to our server
    
-   std::map<std::string,std::string>  notiheaders;
-   notiheaders.insert(std::pair<std::string,std::string>("Authorization", "Bearer 38f51854b1a282d8e9acdb74710fccc0ba3eb4db"));
-   serverRequest notificator("POST", "https://interview-notifier-svc.spotahome.net/api/v1/notification", notiheaders);
+    std::map<std::string,std::string>  notiheaders;
+    notiheaders.insert(std::pair<std::string,std::string>("Authorization", "Bearer 38f51854b1a282d8e9acdb74710fccc0ba3eb4db"));
+    serverRequest notificator("POST", "https://interview-notifier-svc.spotahome.net/api/v1/notification", notiheaders);
+//   serverRequest notificator("GET", "https://interview-notifier-svc.spotahome.net/api/v1/notification");
    
    //set listener
    pthread_t listener_thread;
